@@ -2,6 +2,7 @@
 using Glovebox.Graphics.Drivers;
 using System;
 using System.ComponentModel;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.AppService;
 using Windows.Foundation.Collections;
@@ -16,7 +17,6 @@ namespace ScrollingText
     public sealed partial class MainPage : Page
     {
         private AppServiceConnection appServiceConnection;
-        private BackgroundWorker backgroundWorker1;
 
         public MainPage()
         {
@@ -26,9 +26,6 @@ namespace ScrollingText
 
         private void ScrollText(string message, int repeatCount)
         {
-            // remove + from message (spaces)
-            message = message.Replace("+", " ");
-
             // update UI
             UpdateUi(message, repeatCount);
 
@@ -41,6 +38,7 @@ namespace ScrollingText
             // We'll repeat the message here
             for (int i = 0; i < repeatCount; i++)
             {
+                matrix.FrameClear();
                 matrix.ScrollStringInFromRight(message + "        ", 100);
                 matrix.FrameClear();
             }
@@ -48,13 +46,14 @@ namespace ScrollingText
 
         private async void UpdateUi(string message, int repeat)
         {
+            // We need to update the UI on the UI thread
             await this.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
             {
                 this.TxtDateModified.Text = DateTime.Now.ToString() ;
                 this.TxtMessage.Text = message;
                 this.TxtRepeat.Text = repeat.ToString();
             });
-            }
+        }
 
         private async void InitAppSvc()
         {
@@ -78,7 +77,7 @@ namespace ScrollingText
             }
         }
 
-        private void OnMessageReceived(AppServiceConnection sender, AppServiceRequestReceivedEventArgs args)
+        private async void OnMessageReceived(AppServiceConnection sender, AppServiceRequestReceivedEventArgs args)
         {
             var message = args.Request.Message;
 
@@ -89,8 +88,12 @@ namespace ScrollingText
             {
                 repeat = Int32.Parse(messageRepeat);
             }
-
-            ScrollText(messageText, repeat);
+            // let's do this on a background thread
+            await System.Threading.Tasks.Task.Run(() => ScrollText(messageText, repeat));
         }
+
+
+
+
     }
 }
