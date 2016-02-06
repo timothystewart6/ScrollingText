@@ -1,8 +1,11 @@
 ﻿using Glovebox.Graphics.Components;
 using Glovebox.Graphics.Drivers;
 using System;
+using System.ComponentModel;
+using System.Threading.Tasks;
 using Windows.ApplicationModel.AppService;
 using Windows.Foundation.Collections;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
 namespace ScrollingText
@@ -13,6 +16,7 @@ namespace ScrollingText
     public sealed partial class MainPage : Page
     {
         private AppServiceConnection appServiceConnection;
+        private BackgroundWorker backgroundWorker1;
 
         public MainPage()
         {
@@ -24,6 +28,9 @@ namespace ScrollingText
         {
             // remove + from message (spaces)
             message = message.Replace("+", " ");
+
+            // update UI
+            UpdateUi(message, repeatCount);
 
             //var driver = new Ht16K33(new byte[] { 0x70 }, Ht16K33.Rotate.None, LedDriver.Display.On, 2, LedDriver.BlinkRate.Off, "I2C1");
             var driver = new Ht16K33();
@@ -38,6 +45,16 @@ namespace ScrollingText
                 matrix.FrameClear();
             }
         }
+
+        private async void UpdateUi(string message, int repeat)
+        {
+            await this.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+            {
+                this.TxtDateModified.Text = DateTime.Now.ToString() ;
+                this.TxtMessage.Text = message;
+                this.TxtRepeat.Text = repeat.ToString();
+            });
+            }
 
         private async void InitAppSvc()
         {

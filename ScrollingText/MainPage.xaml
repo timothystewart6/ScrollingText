@@ -8,10 +8,14 @@
     mc:Ignorable="d">
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10" Width="340" Height="620">
             <Ellipse x:Name="LED" Fill="LightGray" Stroke="White" Width="100" Height="100" Margin="10"/>
-            <TextBlock x:Name="StateText" Text="OFF" Margin="10" TextAlignment="Center" FontSize="26.667" />
-            <TextBlock x:Name="GpioStatus" Text="Waiting to initialize GPIO..." Margin="10,50,10,10" TextAlignment="Center" FontSize="26.667" />
+            <TextBlock x:Name="LblMessage" Text="Message:" Margin="10" TextAlignment="Center" FontSize="26.667" />
+            <TextBlock x:Name="TxtMessage" Text="" Margin="10" TextAlignment="Center" FontSize="26.667" />
+            <TextBlock x:Name="LblRepeat" Text="Repeat:" Margin="10" TextAlignment="Center" FontSize="26.667" />
+            <TextBlock x:Name="TxtRepeat" Text="" Margin="10" TextAlignment="Center" FontSize="26.667" />
+            <TextBlock x:Name="LblDateModified" Text="Sent:" Margin="10" TextAlignment="Center" FontSize="26.667" />
+            <TextBlock x:Name="TxtDateModified" Text="" Margin="10" TextAlignment="Center" FontSize="26.667" />
         </StackPanel>
     </Grid>
 </Page>
